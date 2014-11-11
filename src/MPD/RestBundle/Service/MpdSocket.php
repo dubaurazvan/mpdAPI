@@ -23,11 +23,24 @@ class MpdSocket
     
     protected $mpdSocket = false;
     
+    /**
+     * Check if script is connect to MPD Socket
+     * 
+     * @return boolean
+     */
     public function isConnected()
     {
         return $this->connected;
     }
     
+    /**
+     * Connect to MPD Socket
+     * 
+     * @param type $host
+     * @param type $port
+     * @param type $password
+     * @return boolean|null
+     */
     public function connect($host = 'localhost', $port = 6600, $password = NULL)
     {
         $this->mpdSocket = fsockopen($host, $port, $errNo, $errStr, 10);
@@ -55,10 +68,18 @@ class MpdSocket
         }
     }
     
+    /**
+     * Execute a command against mpd service
+     * 
+     * @param type $cmdStr
+     * @param type $arg1
+     * @param type $arg2
+     * @return array
+     */
     public function execute($cmdStr, $arg1 = '', $arg2 = '')
     {
         if (!$this->isConnected()) {
-            echo "mpd->SendCommand() / Error: Not connected\n";
+            return $this->setError('Not connected')->getError();
         } else {
             // Clear out the error String
             $this->errString = "";
@@ -94,9 +115,16 @@ class MpdSocket
         return $respStr;
     }
     
+    /**
+     * Validate a response
+     * This method is called in recursive execution
+     * If an error will occur, setError will add it to the list of errors.
+     * 
+     * @param type $response
+     * @return boolean|null
+     */
     protected function validate($response)
     {
-       
         if (strncmp(self::MPD_RESPONSE_OK, $response, strlen(self::MPD_RESPONSE_OK)) == 0) {
            return true;
         }
@@ -110,6 +138,11 @@ class MpdSocket
         }
     }
     
+    /**
+     * Check if there is any error stored after a request
+     * 
+     * @return boolean
+     */
     protected function isValid()
     {
         if (!empty($this->errorString)) {
@@ -119,6 +152,12 @@ class MpdSocket
         return true;
     }
     
+    /**
+     * Set an error
+     * 
+     * @param mixed $error
+     * @return \MPD\RestBundle\Service\MpdSocket
+     */
     protected function setError($error)
     {
         $this->errorString = $error;
@@ -126,11 +165,22 @@ class MpdSocket
         return $this;
     }
     
+    /**
+     * Get errors
+     * 
+     * @return array
+     */
     protected function getError()
     {
         return array('error' => $this->errorString);
     }
     
+    /**
+     * Get MPD status. 
+     * It will an array of infos about the current status of MPD
+     * 
+     * @return type
+     */
     public function getStatus()
     {
         $response = $this->execute('status');

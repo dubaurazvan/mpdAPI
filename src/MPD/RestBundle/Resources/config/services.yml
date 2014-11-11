@@ -1,8 +1,8 @@
 services:
-    mpd_manager:
-        class: MPD\RestBundle\Service\MpdManager
-        properties:
-            socket: "@mpd_socket"
+#    mpd_manager:
+#        class: MPD\RestBundle\Service\MpdManager
+#        properties:
+#            socket: "@mpd_socket"
     mpd_socket:
         class: MPD\RestBundle\Service\MpdSocket
         calls:
