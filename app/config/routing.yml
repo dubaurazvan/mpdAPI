@@ -1,4 +1,4 @@
 mpd_rest:
     resource: "@MPDRestBundle/Resources/config/routing.yml"
-    prefix:   /
+    prefix:   /api/v1/
 

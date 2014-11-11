@@ -1,0 +1,6 @@
+parameters:
+    mpdServer: 'localhost'
+    mpdPort: 6600
+    mpdPassword: NULL
+    volDownSteps: 10
+    volUpSteps: 10
