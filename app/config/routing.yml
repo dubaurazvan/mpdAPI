@@ -1,0 +1,4 @@
+mpd_rest:
+    resource: "@MPDRestBundle/Resources/config/routing.yml"
+    prefix:   /
+
