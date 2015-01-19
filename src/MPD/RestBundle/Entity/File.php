@@ -4,6 +4,7 @@ namespace MPD\RestBundle\Entity;
 
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\VirtualProperty;
 
 /**
  * Entity to handle files from MPD file system
@@ -31,12 +32,9 @@ class File
     protected $path;
     
     /**
-     * @var string
-     */
-    protected $lastModified;
-    
-    /**
-     * @var integer 
+     * @var integer
+     * 
+     * @Expose
      */
     protected $time;
     
@@ -53,17 +51,19 @@ class File
         }
         
         $name = explode('/', $file['file']);
+        
+        $this->setName(end($name));
+        
         if (count($name) > 1) {
-            $this->setName(end($name));
-            
             // add path
             array_pop($name);
             $path = implode('/', $name);
             $this->setPath($path);
-        } else {
-            $this->setName($name);
         }
         
+        if (isset($file['time'])) {
+            $this->setTime($file['time']);
+        }
     }
     
     /**
@@ -87,6 +87,18 @@ class File
     public function getPath()
     {
         return $this->path;
+    }
+    
+    /**
+     * Get file path
+     * 
+     * @return string
+     * 
+     * @VirtualProperty
+     */
+    public function getFullpath()
+    {
+        return (!empty($this->path) ? $this->path . '/' : '') . $this->name;
     }
     
     /**

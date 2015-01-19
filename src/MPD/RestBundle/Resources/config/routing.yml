@@ -10,6 +10,10 @@ file-system:
     resource: MPD\RestBundle\Controller\FileSystemController
     type: rest
     
+playlist:
+    resource: MPD\RestBundle\Controller\PlaylistController
+    type: rest
+    
 #mpd_rest_track_play:
 #    path:     /play/{id}
 #    defaults: { _controller: MPDRestBundle:Track:play, id: 0 }

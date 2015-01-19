@@ -36,7 +36,7 @@ class Directory
      * @param array $filepath
      * @throws \Exception
      */
-    public function __construct($name, $path = '')
+    public function __construct($name, $path = null)
     {
         if (empty($name)) {
             throw new \Exception("No directory information provided!");

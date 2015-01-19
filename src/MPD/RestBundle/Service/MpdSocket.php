@@ -211,8 +211,33 @@ class MpdSocket
         
         return $return;
     }
+
+    /**
+     * Add track to playlist
+     * 
+     * @param string $track
+     */
+    public function add($track)
+    {
+        $track = str_replace(' ', '\ ', $track);
+        $response = $this->execute('add "' . $track . '"');
+        
+        return $response;
+    }
     
-    public function getFileSystemList()
+     /**
+     * Remove track from playlist
+     * 
+     * @param integer $trackPosition
+     */
+    public function remove($trackPosition)
+    {
+        $response = $this->execute('delete "' . $trackPosition . '"');
+        
+        return $response;
+    }
+    
+    public function getFileSystemList($root = '', $allFiles = false)
     {
         $response = $this->execute('listallinfo');
         array_pop($response);
@@ -236,6 +261,10 @@ class MpdSocket
             }
         }
         
-        return $this->treeBuilder->getItems($results);
+        if ($allFiles) {
+            return $results;
+        }
+        
+        return $this->levelBuilder->getItems($results, $root);
     }
 }

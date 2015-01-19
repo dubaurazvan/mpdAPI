@@ -11,4 +11,4 @@ services:
             levelBuilder: "@mpd_filesystem_level_builder"
             
     mpd_filesystem_level_builder:
-        class: MPD\RestBundle\Service\Filesystem\LevelBuilder
+        class: MPD\RestBundle\Service\FileSystem\LevelBuilder

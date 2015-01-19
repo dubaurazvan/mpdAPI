@@ -22,15 +22,11 @@ class FileSystemController extends FOSRestController
      */
     public function getAction(Request $request)
     {
-        $folder = $request->get('folder', null);
-        
-        if (!is_null($folder)) {
-            print_r($folder);
-        }
+        $root = $request->get('root', null);
         
         $mpd = $this->get('mpd_socket');
         
-        return $mpd->getFileSystemList();
+        return $mpd->getFileSystemList($root);
     }
     
 }
