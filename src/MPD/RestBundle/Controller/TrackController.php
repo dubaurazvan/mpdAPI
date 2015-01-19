@@ -8,7 +8,7 @@ use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
- * Rest controller for search
+ * Rest controller for Track
  *
  * @package MPD\RestBundle\Controller
  * @author Dubau Razvan <dubau_razvan@yahoo.com>
@@ -21,9 +21,9 @@ class TrackController extends FOSRestController
      */
     public function playAction()
     {
-        $mpd = $this->get('mpd_manager');
+        $mpd = $this->get('mpd_socket');
 
-        return $mpd->socket->execute("play");
+        return $mpd->execute("play");
     }
     
     /**
@@ -32,9 +32,9 @@ class TrackController extends FOSRestController
      */
     public function stopAction()
     {
-        $mpd = $this->get('mpd_manager');
+        $mpd = $this->get('mpd_socket');
 
-        return $mpd->socket->execute("stop");
+        return $mpd->execute("stop");
     }
     
     /**
@@ -43,9 +43,9 @@ class TrackController extends FOSRestController
      */
     public function pauseAction()
     {
-        $mpd = $this->get('mpd_manager');
+        $mpd = $this->get('mpd_socket');
 
-        return $mpd->socket->execute("pause");
+        return $mpd->execute("pause");
     }
     
     /**
@@ -54,8 +54,8 @@ class TrackController extends FOSRestController
      */
     public function statusAction()
     {
-        $mpd = $this->get('mpd_manager');
+        $mpd = $this->get('mpd_socket');
 
-        return $mpd->socket->getStatus();
+        return $mpd->getStatus();
     }
 }

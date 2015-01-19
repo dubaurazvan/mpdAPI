@@ -7,3 +7,8 @@ services:
         class: MPD\RestBundle\Service\MpdSocket
         calls:
             - [ connect, [%mpdServer%, %mpdPort%, %mpdPassword%]]
+        properties:
+            levelBuilder: "@mpd_filesystem_level_builder"
+            
+    mpd_filesystem_level_builder:
+        class: MPD\RestBundle\Service\Filesystem\LevelBuilder

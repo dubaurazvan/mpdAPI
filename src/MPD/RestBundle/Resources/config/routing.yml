@@ -2,6 +2,14 @@ tracks:
     resource: MPD\RestBundle\Controller\TrackController
     type: rest
     
+settings:
+    resource: MPD\RestBundle\Controller\SettingsController
+    type: rest
+    
+file-system:
+    resource: MPD\RestBundle\Controller\FileSystemController
+    type: rest
+    
 #mpd_rest_track_play:
 #    path:     /play/{id}
 #    defaults: { _controller: MPDRestBundle:Track:play, id: 0 }

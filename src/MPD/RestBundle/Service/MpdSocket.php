@@ -85,11 +85,13 @@ class MpdSocket
             $this->errString = "";
             $respStr = "";
 
-            $cmdStr .= !empty($arg1) ? : '';
-            $cmdStr .= !empty($arg2) ? : '';
+            $cmdStr .= !empty($arg1) ? " \"{$arg1}\"": '';
+            $cmdStr .= !empty($arg2) ? " \"{$arg2}\"": '';
             
             fputs($this->mpdSocket, "$cmdStr\n");
 
+            // die('bitch');
+            
             while(!feof($this->mpdSocket)) {
                 $response = fgets($this->mpdSocket,1024);
 
@@ -98,10 +100,6 @@ class MpdSocket
                 
                 if ($this->validate($response)) {
                     break;
-                }
-                
-                if (false === $this->validate($respStr)) {
-                    return null;
                 }
             }
             
@@ -121,7 +119,7 @@ class MpdSocket
      * If an error will occur, setError will add it to the list of errors.
      * 
      * @param type $response
-     * @return boolean|null
+     * @return boolean
      */
     protected function validate($response)
     {
@@ -130,12 +128,12 @@ class MpdSocket
         }
         
         // An ERR signals the end of transmission with an error! Let's grab the single-line message.
-        if (strncmp(self::MPD_RESPONSE_ERR, $response, strlen(self::MPD_RESPONSE_ERR)) == 0) {
-            list($junk, $errTmp) = explode(self::MPD_RESPONSE_ERR . ' ', $response);
-            $this->setError(strtok($errTmp,"\n"));
-            
-            return null;
+        if (preg_match('/' . self::MPD_RESPONSE_ERR . '/', $response)) {
+            $this->setError($response);
+            return true;
         }
+        
+        return false;
     }
     
     /**
@@ -177,7 +175,7 @@ class MpdSocket
     
     /**
      * Get MPD status. 
-     * It will an array of infos about the current status of MPD
+     * It will return an array of infos about the current status of MPD
      * 
      * @return type
      */
@@ -193,5 +191,51 @@ class MpdSocket
         }
         
         return $return;
+    }
+    
+    /**
+     * Set new volume level
+     * 
+     * @return type
+     */
+    public function setVolume($volume)
+    {
+        $response = $this->execute('volume ' . $volume);
+        array_pop($response);
+        
+        $return = array();
+        foreach ($response as $item) {
+            list($key, $value) = explode(':', $item);
+            $return[trim($key)] = trim($value);
+        }
+        
+        return $return;
+    }
+    
+    public function getFileSystemList()
+    {
+        $response = $this->execute('listallinfo');
+        array_pop($response);
+        
+        $results = array();
+        foreach ($response as $item) {
+            if (preg_match('/file\:/', $item)) {
+                $results[] = array(
+                    'file' => str_replace('file: ', '', $item)
+                );
+            } 
+            
+            elseif (preg_match('/Last\-Modified:/', $item)) {
+                $keys = array_keys($results);
+                $results[end($keys)]['last-modified'] = str_replace('Last-Modified: ', '', $item);
+            }
+            
+            elseif (preg_match('/Time:/', $item)) {
+                $keys = array_keys($results);
+                $results[end($keys)]['time'] = str_replace('Time: ', '', $item);
+            }
+        }
+        
+        return $this->treeBuilder->getItems($results);
     }
 }
