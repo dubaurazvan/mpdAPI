@@ -4,6 +4,7 @@ namespace MPD\RestBundle\Entity;
 
 use JMS\Serializer\Annotation\ExclusionPolicy;
 use JMS\Serializer\Annotation\Expose;
+use JMS\Serializer\Annotation\VirtualProperty;
 
 /**
  * Entity to handle files from MPD file system
@@ -67,6 +68,18 @@ class Directory
     public function getPath()
     {
         return $this->path;
+    }
+    
+    /**
+     * Get directory full path
+     * 
+     * @return string
+     * 
+     * @VirtualProperty
+     */
+    public function getFullpath()
+    {
+        return (!empty($this->path) ? $this->path . '/' : '') . $this->name;
     }
     
     /**

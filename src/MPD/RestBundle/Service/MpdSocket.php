@@ -217,7 +217,7 @@ class MpdSocket
      * 
      * @param string $track
      */
-    public function add($track)
+    public function addToPlaylist($track)
     {
         $track = str_replace(' ', '\ ', $track);
         $response = $this->execute('add "' . $track . '"');
@@ -230,14 +230,70 @@ class MpdSocket
      * 
      * @param integer $trackPosition
      */
-    public function remove($trackPosition)
+    public function removeFromPlaylist($trackPosition)
     {
         $response = $this->execute('delete "' . $trackPosition . '"');
         
         return $response;
     }
     
-    public function getFileSystemList($root = '', $allFiles = false)
+    /**
+     * Move a track inside a playlist
+     * 
+     * @param type $trackId
+     */
+    public function moveTrack($trackId, $toPosition)
+    {
+        $response = $this->execute('moveid ' . $trackId . ' ' . $toPosition);
+        
+        return $response;
+    }
+    
+    /**
+     * Get the current playlist
+     * 
+     * @return array
+     */
+    public function getPlaylist()
+    {
+        $response = $this->execute('playlistinfo');
+        
+        if (count($response) <= 1) {
+            return array();
+        }
+        
+        array_pop($response);
+        
+        $return = array();
+        $tempArray = array();
+        $i = 1;
+        foreach ($response as $item) {
+            if ($i <= 5) {
+                list($key, $value) = preg_split('/\:+/', $item, 2);
+                $tempArray[trim($key)] = trim($value);
+            }
+            $i++;
+            
+            if ($i == 6) {
+                $i = 1;
+                $return[] = $tempArray;
+                $tempArray = array();
+            }
+        }
+        
+        return $return;
+    }
+    
+    /**
+     * Return a one level list of files and directories available in the MPD 
+     * shared directory, starting from a specific root level
+     * 
+     * Shared directory of MPD is set in the /etc/mpd.conf
+     * 
+     * @param type $root
+     * @return type
+     */
+    public function getFileSystemList($root = '')
     {
         $response = $this->execute('listallinfo');
         array_pop($response);
@@ -259,10 +315,6 @@ class MpdSocket
                 $keys = array_keys($results);
                 $results[end($keys)]['time'] = str_replace('Time: ', '', $item);
             }
-        }
-        
-        if ($allFiles) {
-            return $results;
         }
         
         return $this->levelBuilder->getItems($results, $root);

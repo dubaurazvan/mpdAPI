@@ -1,5 +1,5 @@
-tracks:
-    resource: MPD\RestBundle\Controller\TrackController
+player:
+    resource: MPD\RestBundle\Controller\PlayerController
     type: rest
     
 settings:

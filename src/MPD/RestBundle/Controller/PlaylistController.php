@@ -5,6 +5,7 @@ namespace MPD\RestBundle\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Controller\Annotations\View;
+use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\Post;
 use FOS\RestBundle\Controller\Annotations\Delete;
 
@@ -25,7 +26,7 @@ class PlaylistController extends FOSRestController
         $track = $request->get('track');
         $mpd = $this->get('mpd_socket');
         
-        return $mpd->add($track);
+        return $mpd->addToPlaylist($track);
     }
     
     /**
@@ -36,6 +37,29 @@ class PlaylistController extends FOSRestController
     {
         $mpd = $this->get('mpd_socket');
         
-        return $mpd->remove($id);
+        return $mpd->removeFromPlaylist($id);
     }
+    
+    /**
+     * @View(templateVar="output")
+     * @Get("/playlist/move/{id}/{position}")
+     */
+    public function moveAction($id, $position)
+    {
+        $mpd = $this->get('mpd_socket');
+        
+        return $mpd->moveTrack($id, $position);
+    }
+    
+    /**
+     * @View(templateVar="output")
+     * @GET("/playlist")
+     */
+    public function listAction()
+    {
+        $mpd = $this->get('mpd_socket');
+        
+        return $mpd->getPlaylist();
+    }
+    
 }

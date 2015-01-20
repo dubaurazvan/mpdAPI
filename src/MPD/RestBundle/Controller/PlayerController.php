@@ -8,12 +8,12 @@ use FOS\RestBundle\Controller\Annotations\View;
 use FOS\RestBundle\Controller\Annotations\Get;
 
 /**
- * Rest controller for Track
+ * Rest controller for Player
  *
  * @package MPD\RestBundle\Controller
  * @author Dubau Razvan <dubau_razvan@yahoo.com>
  */
-class TrackController extends FOSRestController
+class PlayerController extends FOSRestController
 {
     /**
      * @View(templateVar="output")
@@ -46,6 +46,43 @@ class TrackController extends FOSRestController
         $mpd = $this->get('mpd_socket');
 
         return $mpd->execute("pause");
+    }
+    
+    /**
+     * @View(templateVar="output")
+     * @GET("/next")
+     */
+    public function nextAction()
+    {
+        $mpd = $this->get('mpd_socket');
+
+        return $mpd->execute("next");
+    }
+    
+    /**
+     * @View(templateVar="output")
+     * @GET("/previous")
+     */
+    public function previousAction()
+    {
+        $mpd = $this->get('mpd_socket');
+
+        return $mpd->execute("previous");
+    }
+    
+    /**
+     * Seek the currently playing song
+     * 
+     * @View(templateVar="output")
+     * @GET("/seek/{time}")
+     */
+    public function seekAction($time)
+    {
+        $mpd = $this->get('mpd_socket');
+        
+        $status = $mpd->getStatus();
+
+        return $mpd->execute('seekid ' . $status['songid']  . ' ' . $time);
     }
     
     /**

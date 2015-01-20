@@ -42,6 +42,12 @@ class LevelBuilder
         return $this->queue;
     }
     
+    /**
+     * Add a directory or file to the file-system queue
+     * 
+     * @param \MPD\RestBundle\Entity\Directory $item
+     * @return void
+     */
     protected function add($item)
     {
         if ($item instanceof Directory) {
@@ -52,6 +58,12 @@ class LevelBuilder
         $this->queue['files'][] = $item;
     }
     
+    /**
+     * Get the list of files at a specific level inside the shared MPD directory
+     * 
+     * @param array $items
+     * @param type $root
+     */
     protected function getFiles(array $items, $root = '')
     {
         foreach ($items as $item) {
@@ -63,6 +75,12 @@ class LevelBuilder
         }
     }
     
+    /**
+     * Get the list of directories at a specific level inside the shared MPD directory
+     * 
+     * @param array $items
+     * @param type $root
+     */
     protected function getDirectories(array $items, $root = '')
     {
         foreach ($items as $item) {
@@ -75,9 +93,10 @@ class LevelBuilder
                     $directory = new Directory($dirName[0], $root);
                     $this->add($directory);
                 }
-                
             }
         }
+        
+        $this->queue['directories'] = array_values($this->queue['directories']);
     }
     
 }
